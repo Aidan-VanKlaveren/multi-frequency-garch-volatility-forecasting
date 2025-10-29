@@ -18,7 +18,7 @@ This dataset underpins **Tables 5.11–5.12** and associated figures in the thes
 
 ## 🧩 Data Sources
 
-All scripts operate on **GBPAUD Bid/Ask OHLCV** data exported from **BarChart**, covering  
+All scripts operate on **GBPAUD Bid/Ask OHLCV** data exported from **Dukascopy**, covering  
 `2022-01-01 – 2025-01-02` with synchronized timestamps across the following intervals:
 
 
