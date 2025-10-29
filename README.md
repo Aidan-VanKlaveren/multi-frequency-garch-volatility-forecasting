@@ -47,6 +47,8 @@ A **triangular exchange-rate diagnostic** (GBPEUR–USDEUR–USDGBP) is used to 
 │   ├── PlotsForMAREandRho.R
 │   └── README.md
 
+---
+
 ## 📂 Section Descriptions
 
 ### **Dataset 1 – Dukascopy**
