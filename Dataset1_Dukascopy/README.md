@@ -1,94 +1,86 @@
-# Dataset 1 — GBPAUD  
-R scripts for rolling-window GARCH variance forecasting and model comparison using high-frequency GBPAUD data.
+# Dataset 1 — GBPAUD (Multi-Frequency GARCH)
+
+R scripts and results for the **rolling-window GJR-GARCH forecasting** and **Extreme Value Theory tail modelling** applied to the **GBPAUD foreign-exchange pair** across multiple high-frequency sampling intervals.  
+This dataset underpins **Tables 5.11–5.12** and associated figures in the thesis.
 
 ---
 
-## Overview
-This folder contains the code used to generate the **Dataset 1** results in the thesis (GBPAUD foreign exchange series).  
-It covers:
+## 📁 Overview
 
-- Rolling-window GARCH forecasting across multiple window sizes.  
-- Multi-step variance forecast evaluation (MAE, MSE, RMSE).  
-- Training-window optimization and performance diagnostics.  
-- GPD tail-fit diagnostics for residuals (extreme value analysis).  
-- Summary table builders and figure generation.
-
----
-
-## Data expectations
-- Input: pre-aggregated GBPAUD minute-level log-return CSVs (`GBPAUD1M.csv`, etc.).  
-- Columns expected:  
-  `Timestamp, log_return` (numeric).  
-- Scripts assume the data have already been cleaned, synchronized, and trimmed to complete-minute intervals.  
-- Period of analysis: **rolling test windows throughout 2025** (matching Dataset 2).
+| Script | Purpose |
+|:-------|:---------|
+| `01_garch_optimised_training_windows.R` | Tunes GARCH(1,1) rolling-window sizes via multi-start optimization and parallel refitting across 5 M, 15 M, 30 M, and 1 H data. Produces MSE/MAE/RMSE vs window plots to select optimal training horizons. |
+| `02_garch_optimal_testset_forecasting.R` | Re-runs forecasts on the fixed test set using the optimal windows from validation. Generates **non-overlapping, multi-step** sGARCH(1,1) (Gaussian) forecasts with multi-start fitting, aligned to minute marks (e.g. 00, 30). Outputs per-horizon CSVs (`test_{freq}_{step}step.csv`). |
+| `03_garch_pareto_distribution.R` | Fits **AR(1)–GARCH(1,1)** with **Student-t** innovations to training data, extracts standardized residuals, and performs **Extreme Value Theory** tail modelling using **Generalized Pareto Distributions (GPD)** for both upper and lower tails. Includes mean-excess diagnostics and ξ/β stability plots. |
+| `04_summary_tables_and_dm_tests.R` | Consolidates test-set CSVs, builds summary and aggregated comparison tables, computes MSE/MAE/RMSE across nested frequencies, and applies **Diebold–Mariano tests** for predictive-accuracy differences. Produces comparative plots (e.g. 1 H vs 30 M vs 15 M). |
 
 ---
 
-## Key scripts and what they produce
+## 🧩 Data Sources
 
-### A) Rolling-window optimization and forecasting
-- **`GARCHOptimisingTrainingWindows.R`**  
-  Tests multiple rolling window sizes (e.g., 50 / 100 / 200) to identify the window length minimizing forecast errors.  
-  Produces diagnostics for each window configuration.  
-  **Thesis mapping:** Section **5.1.3**, Figures **5.1–5.4**, Tables **5.2–5.5**.
+All scripts operate on **GBPAUD Bid/Ask OHLCV** data exported from **BarChart**, covering  
+`2022-01-01 – 2025-01-02` with synchronized timestamps across the following intervals:
 
-- **`GARCH_Test_Set_Forecasting_Using_Optimal_Training_Windows.R`**  
-  Runs the final test-set forecasting using the *optimal* window lengths determined above.  
-  Generates performance metrics (MAE, MSE, RMSE, QLIKE, coverage).  
-  **Thesis mapping:** Section **5.1.2** and **5.1.4**, main forecast diagnostics.
+
+Each script merges Bid + Ask to mid-quotes, engineers log-returns and volatility features, and performs the same **train / validation / test** split with  
+`test_start_date = "2024-06-01 00:00:00 UTC"`.
 
 ---
 
-### B) Multi-step forecasting and evaluation
-- **`SummaryTablesForMultiStepForecasting.R`**  
-  Aggregates the forecast results into summary tables for different step-ahead horizons and sampling frequencies.  
-  **Thesis mapping:** Tables **5.6–5.10** and related discussion on multi-step performance.
+## ⚙️ Pipeline Summary
+
+1. **Rolling-Window Optimisation**  
+   - Sequentially refits `sGARCH(1,1)` models with multi-start (`gosolnp`) parallelization.  
+   - Evaluates window sizes per frequency using MSE, RMSE, MAE, and 95% coverage.  
+   - Selects windows: 5 M → 2400 obs, 15 M → 800, 30 M → 400, 1 H → 200.
+
+2. **Test-Set Forecasting**  
+   - Uses selected windows for non-overlapping multi-step forecasts (`n_ahead = 1…12`).  
+   - Saves results as `test_{freq}_{step}step.csv` containing both `summary.*` and nested `details.*` components.
+
+3. **GPD Tail Modelling (EVT)**  
+   - Fits AR(1)–GARCH(1,1) t-models on training residuals.  
+   - Estimates tail thresholds (e.g. 5th / 95th percentiles), fits GPD via `extRemes::fevd`,  
+     and derives 1 % tail-quantiles for risk diagnostics.  
+   - Outputs include QQ-plots, mean-excess plots, and ξ/β stability grids.
+
+4. **Summary & Evaluation**  
+   - Reads all `test_*.csv` files.  
+   - Aggregates multi-step forecasts to match higher-frequency targets (e.g. 6× 5 M → 30 M).  
+   - Computes comparative metrics and **Diebold–Mariano tests** across base cases:  
+     - 1 H vs 30 M vs 15 M  (1 H benchmark)  
+     - 30 M vs 15 M vs 5 M  (30 M benchmark)  
+     - 15 M vs 5 M       (15 M benchmark)
 
 ---
 
-### C) Tail diagnostics (Extreme Value Theory)
-- **`GarchParetoUsingGPDApproximation.R`**  
-  Fits **Generalized Pareto Distributions (GPD)** to standardized GARCH residuals to study tail heaviness and threshold stability.  
-  Produces QQ plots, mean excess functions, and threshold stability plots.  
-  **Thesis mapping:** **Appendix A**, Figures **A.1–A.20**, Tables **A.1–A.5**.
+## 📊 Key Outputs
+
+| Type | Example Files / Objects | Description |
+|:-----|:------------------------|:-------------|
+| Forecast Results | `test_5m_1step.csv`, `test_30m_2step.csv`, `test_1h_1step.csv` | Multi-step rolling forecasts with summary & details sub-frames. |
+| Validation Results | In-memory `results_{freq}` data frames | Window-size tuning metrics and 3-panel performance plots. |
+| EVT Diagnostics | Mean-excess plots, GPD fit plots, stability plots | Tail-risk estimation for both sides of the distribution. |
+| Summary Tables | `summary_table`, `forecast_errors`, `dm_results` | Aggregated performance and DM test outputs. |
+| Figures | ggplot objects (e.g. MSE/RMSE/MAE vs Window; 7-Day Zoom Forecast Plot) | Visualization used in thesis Figures 5.xx. |
 
 ---
 
-## Common settings
-- Model: **AR(0)–GARCH(1,1)** with Normal innovations (Student-t used in later datasets).  
-- Forecast type: **rolling-window**, **multi-start optimization** using `gosolnp`.  
-- Evaluation metrics: **MAE, MSE, RMSE, and **coverage (95%)**.  
-- Frequencies used: 5m, 15m, 30m, and 60m intervals (aligned minute bins).  
-- Periodization: rolling test windows over 2025 with window sizes tuned via cross-validation.
+## 🧠 Notes for Re-running or Extension
+
+- Ensure all Dukascopy CSVs are present and timestamp-aligned.  
+- Parallelization is configured via `doFuture` / `multisession` (reduce cores if needed).  
+- For extending to other pairs or ν-values (Student-t df), replicate the pipeline:  
+  - Stage A → Window optimisation  
+  - Stage B → Test-set multi-step forecast  
+  - Stage C → Tail diagnostics (GPD)  
+  - Stage D → Summary + DM tests  
+- Figures and tables correspond to Dataset 1 sections within the Results chapter.
 
 ---
 
-## Typical run order
-
-1. **Load and preprocess data**  
-   - Place GBPAUD time-series CSVs in the working directory.  
-
-2. **Optimize window size**  
-   - Run `GARCHOptimisingTrainingWindows.R` to test 50 / 100 / 200 observation windows.
-
-3. **Perform forecasting using optimal windows**  
-   - Run `GARCH_Test_Set_Forecasting_Using_Optimal_Training_Windows.R`.  
-   - Generates the baseline forecast files and summary metrics.
-
-4. **Compile results**  
-   - Run `SummaryTablesForMultiStepForecasting.R` to aggregate results into tables for the thesis.
-
-5. **(Optional) Tail-risk diagnostics**  
-   - Run `GarchParetoUsingGPDApproximation.R` to evaluate GPD tail fits and residual distributions.
+**Author:** Aidan Van Klaveren  
+**Supervisors:** Prof. Pavel Shevchenko • Prof. Gareth W. Peters • Prof. Stefan Trück  
+**Period:** 2022 – 2025 (GBPAUD Study)
 
 ---
-
-## Repro tips
-- All scripts assume consistent timestamp alignment and UTC timezone.  
-- Random seeds are set internally for reproducible `gosolnp` multi-start fits.  
-- Ensure the working directory contains all required CSV files before running any script.
-
----
-
-## Questions?
-If you’re reproducing or extending Dataset 1 (e.g., testing additional FX pairs or comparing alternative GARCH specifications), start with the A/B forecasting scripts, then run the tail analysis (C) for validation.
