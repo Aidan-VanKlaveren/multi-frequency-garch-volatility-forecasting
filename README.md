@@ -25,6 +25,28 @@ A **triangular exchange-rate diagnostic** (GBPEUR–USDEUR–USDGBP) is used to 
 
 ## 🧩 Repository Structure
 
+```plaintext
+├── Dataset1_Dukascopy/
+│   ├── GARCHOptimisingTrainingWindows.R
+│   ├── GARCH_Test_Set_Forecasting_Using_Optimal_Training_Windows.R
+│   ├── GarchParetoUsingGPDApproximation.R
+│   ├── SummaryTablesForMultiStepForecasting.R
+│   └── README.md
+│
+├── Dataset2_Barchart/
+│   ├── 200WindowSizeFixedMultiStepForAllFrequencies.R
+│   ├── RollingGJRGARCHRefitAfter1hourNormDistribution.R
+│   ├── SummaryTables200windowsize.R
+│   ├── Aggregating1minuteintervalsto5_15and60Minutes.R
+│   ├── README.md
+│   └── barchart_multipair_ct_2015New.py
+│
+├── Dataset3_CurrencyTriangles/
+│   ├── GJRGARCHCurrencyTrianglesRefitEvery60Min1StepForecasts.R
+│   ├── TriangleFormulationFromGJRGARCHForecasts.R
+│   ├── PlotsForMAREandRho.R
+│   └── README.md
+
 ## 📂 Section Descriptions
 
 ### **Dataset 1 – Dukascopy**
