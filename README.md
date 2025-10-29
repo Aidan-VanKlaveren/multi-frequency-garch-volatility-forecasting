@@ -42,10 +42,10 @@ A **triangular exchange-rate diagnostic** (GBPEUR–USDEUR–USDGBP) is used to 
 │   └── barchart_multipair_ct_2015New.py
 │
 ├── Dataset3_CurrencyTriangles/
-│   ├── GJRGARCHCurrencyTrianglesRefitEvery60Min1StepForecasts.R
-│   ├── TriangleFormulationFromGJRGARCHForecasts.R
-│   ├── PlotsForMAREandRho.R
-│   └── README.md
+    ├── GJRGARCHCurrencyTrianglesRefitEvery60Min1StepForecasts.R
+    ├── TriangleFormulationFromGJRGARCHForecasts.R
+    ├── PlotsForMAREandRho.R
+    └── README.md```
 
 ---
 
