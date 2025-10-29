@@ -79,8 +79,3 @@ Each script merges Bid + Ask to mid-quotes, engineers log-returns and volatility
 
 ---
 
-**Author:** Aidan Van Klaveren  
-**Supervisors:** Prof. Pavel Shevchenko • Prof. Gareth W. Peters • Prof. Stefan Trück  
-**Period:** 2022 – 2025 (GBPAUD Study)
-
----
