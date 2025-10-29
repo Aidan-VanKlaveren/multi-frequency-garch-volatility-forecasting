@@ -19,7 +19,7 @@ Generates 1-step GJR–GARCH(1,1) forecasts for each triangle leg.
 
 - **Inputs:**  
   - `{PAIR}_{FREQ}.csv` for each of GBPEUR, USDEUR, USDGBP  
-    (frequencies = 1M, 5M, 15M, 30M, 60M)
+    (frequencies = 1M)
 - **Model:**  
   - GJR–GARCH(1,1) with Student-t(df = 10), no mean term  
   - Rolling training window = 200 observations  
