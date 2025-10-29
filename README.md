@@ -16,6 +16,7 @@ Multiple intraday intervals (1-, 5-, 15-, 30-minute, and 1-hour) are evaluated u
 The thesis compares several GARCH-family specifications — including **GARCH(1,1)**, **EGARCH**, **TGARCH**, and **GJR–GARCH** with **Student-t innovations** — across multiple datasets to assess forecasting accuracy, multi-step variance aggregation, and cross-frequency consistency.
 
 Forecast accuracy is measured using **MSE**, **RMSE**, **MAE**, **Coverage**, **QLIKE**, and **Quasi-Deviance**, with robustness checks via **Diebold–Mariano (DM)** tests.  
+
 Additionally, higher-frequency forecasts are **aggregated to approximate lower-frequency realised variances**, providing insight into how fine-scale information transfers across time horizons.
 
 A **triangular exchange-rate diagnostic** (GBPEUR–USDEUR–USDGBP) is used to test internal coherence under the no-arbitrage assumption via **MARE** and **correlation-gap metrics**.
