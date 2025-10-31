@@ -4,7 +4,7 @@ This repository contains the R code supporting the Master of Research thesis:
 
 > **"Multi-Frequency GARCH Modelling for High-Frequency Volatility Forecasting in Foreign Exchange Markets"**  
 > *Aidan Van Klaveren, Macquarie University (2025)*  
-> Supervisors: Prof. Pavel Shevchenko, Prof. Gareth W. Peters, and Prof. Stefan Trück  
+> Supervisors: Prof. Pavel Shevchenko, Prof. Gareth W. Peters, and Prof. Stefan Trüeck  
 
 ---
 
