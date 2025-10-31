@@ -19,7 +19,7 @@ Generates 1-step GJR–GARCH(1,1) forecasts for each triangle leg.
 
 - **Inputs:**  
   - `{PAIR}_{FREQ}.csv` for each of GBPEUR, USDEUR, USDGBP  
-    (frequencies = 1M)
+    (frequencies = 1M, 5m, 15m, 30m and 1hr)
 - **Model:**  
   - GJR–GARCH(1,1) with Student-t(df = 10), no mean term  
   - Rolling training window = 200 observations  
@@ -94,5 +94,5 @@ Each script can be run independently once its required input files are present.
 
 If re-running experiments or extending to other currency sets, adjust:
 - `pairs <- c(x="GBPEUR", y="USDEUR", z="USDGBP")`
-- `freqs <- c("1M")`
+- `freqs <- c("1M", "5m", "15m", "30m" and "1hr")`
 - and rerun the pipeline in the order above.
